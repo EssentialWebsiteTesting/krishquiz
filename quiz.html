@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 Quiz - Interactive Animations and Games</title>
+<style>
+    body { 
+        font-family: 'Arial', sans-serif; 
+        padding: 20px; 
+        background: #f4f7f6; 
+        color: #333; 
+        margin: 0;
+    }
+    h2 { 
+        text-align: center; 
+        color: #5D6D7E; 
+    }
+    .quiz-container { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        background-color: #fff; 
+        padding: 20px; 
+        border-radius: 10px; 
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1); 
+    }
+    .question { 
+        background: #f9f9f9; 
+        padding: 15px; 
+        border-radius: 8px; 
+        margin-bottom: 20px; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    }
+    .question p { margin: 0 0 10px; font-size: 18px; font-weight: 500; }
+    label { 
+        display: block; 
+        margin: 8px 0; 
+        font-size: 16px; 
+        cursor: pointer; 
+    }
+    input[type="radio"] {
+        margin-right: 10px;
+    }
+    .submit-btn { 
+        width: 100%; 
+        padding: 12px; 
+        background-color: #28a745; 
+        color: #fff; 
+        border: none; 
+        border-radius: 8px; 
+        font-size: 18px; 
+        cursor: pointer; 
+    }
+    .submit-btn:hover { background-color: #218838; }
+    .retry-btn { 
+        width: 100%; 
+        padding: 12px; 
+        background-color: #007bff; 
+        color: #fff; 
+        border: none; 
+        border-radius: 8px; 
+        font-size: 18px; 
+        cursor: pointer; 
+        margin-top: 20px;
+    }
+    .retry-btn:hover { background-color: #0056b3; }
+    .correct { color: green; }
+    .incorrect { color: red; }
+    .answer-feedback { font-size: 16px; padding-left: 20px; }
+    #result { font-size: 20px; font-weight: bold; text-align: center; margin-top: 20px; }
+</style>
+</head>
+<body>
+
+<div class="quiz-container">
+    <h2>Unit 3 Quiz - Interactive Animations and Games FOR KRISH JADAV</h2>
+    <img src="krishpic.png" alt="Krish" style="display: block; margin: 0 auto;border: #333;">
+
+    <div id="quiz"></div>
+
+    <button class="submit-btn" onclick="submitQuiz()">Submit Quiz</button>
+    <button class="retry-btn" onclick="retryQuiz()" style="display: none;">Retry Quiz</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+const quizData = [
+    {q: "What is a sprite?", options: ["A type of sound", "A graphic or character that you control or animate", "A text box", "A background image"], answer: 1},
+    {q: "Which block is used to create a new sprite?", options: ["drawSprites()", "createSprite()", "makeCharacter()", "sprite()"], answer: 1},
+    {q: "What does drawSprites() do?", options: ["Changes the color of the background", "Draws all the sprites on the screen", "Creates a new sprite", "Moves the sprite automatically"], answer: 1},
+    {q: "What function is used to repeatedly run code in Code.org's Game Lab?", options: ["draw()", "repeat()", "drawLoop()", "drawSprites()"], answer: 0},
+    {q: "What is a sprite's .x property?", options: ["Its speed", "Its left-to-right position on the screen", "Its color", "Its size"], answer: 1},
+    {q: "What happens if you don't include drawSprites() in your program?", options: ["Your sprite will move faster", "Your sprite will not appear on the screen", "Your background will change colors", "Your sprite will appear but won't move"], answer: 1},
+    {q: "Which property controls how big a sprite appears?", options: ["sprite.size", "sprite.scale", "sprite.length", "sprite.grow"], answer: 1},
+    {q: "How can you make a sprite move to the right?", options: ["Increase its x property", "Increase its y property", "Decrease its x property", "Decrease its y property"], answer: 0},
+    {q: "What is the purpose of the keyDown() function?", options: ["Checks if a sprite is touching another", "Checks if a key is being pressed", "Moves a sprite automatically", "Changes the background"], answer: 1},
+    {q: "Which of these would make the background blue?", options: ["background(\"blue\")", "backgroundColor(\"blue\")", "bg(\"blue\")", "setBackground(\"blue\")"], answer: 0},
+    {q: "Which axis (x or y) controls left and right (horizontal) movement?", options: ["x", "y", "Both", "Neither"], answer: 0},
+    {q: "Which axis (x or y) controls up and down (vertical) movement?", options: ["x", "y", "Both", "Neither"], answer: 1},
+    {q: "What happens if you increase a sprite's y property?", options: ["The sprite moves up", "The sprite moves down", "The sprite moves left", "The sprite moves right"], answer: 1},
+    {q: "What does sprite.rotation change?", options: ["The sprite’s size", "The sprite’s color", "The sprite’s position", "The angle the sprite is turned"], answer: 3},
+    {q: "What does sprite.scale do?", options: ["Moves the sprite left or right", "Controls the size of the sprite", "Controls the sprite's speed", "Rotates the sprite"], answer: 1},
+    {q: "Which is the correct dot notation to make a sprite half its original size?", options: ["sprite.scale = 2;", "sprite.scale = 0.5;", "sprite.scale = -1;", "sprite.scale = sprite.scale / 2;"], answer: 1},
+    {q: "Which is the correct dot notation to rotate a sprite 45 degrees?", options: ["sprite.turn(45);", "sprite.rotation = 45;", "sprite.rotate = 45;", "sprite.angle = 45;"], answer: 1},
+    {q: "What is the purpose of setAnimation()?", options: ["Makes the sprite bigger", "Sets the image or animation for the sprite", "Changes the background", "Moves the sprite automatically"], answer: 1},
+    {q: "Which is the correct way to change a sprite's animation to \"jump\"?", options: ["sprite.animation = \"jump\";", "sprite.setAnimation = \"jump\";", "sprite.setAnimation(\"jump\");", "setAnimation(\"jump\");"], answer: 2},
+    {q: "What will happen if you set a sprite’s scale to 0?", options: ["It will become twice as big", "It will disappear", "It will rotate", "It will move to the top left corner"], answer: 1},
+    {q: "If you create a sprite named note4, how would you correctly change its scale?", options: ["sprite.scale = 0.5;", "note4.scale = 0.5;", "note4.setScale(0.5);", "scale = 0.5;"], answer: 1},
+    
+    // New text-related questions
+    {q: "Which function displays text on the screen in Game Lab?", options: ["displayText()", "print()", "text()", "showText()"], answer: 2},
+    {q: "What property controls the size of the text displayed with the text() function?", options: ["text.size", "textSize()", "fontSize()", "setTextSize()"], answer: 1},
+    {q: "What is the correct order of parameters in the text() function?", options: ["x, y, text", "text, x, y", "text, y, x", "x, text, y"], answer: 1},
+    {q: "Which function is used to change the color of text in Game Lab?", options: ["fill()", "textColor()", "setTextColor()", "colorText()"], answer: 0},
+    {q: "What happens if you use text() without specifying x and y positions?", options: ["The text appears in the center", "The text won’t be shown", "It shows at (0,0)", "It causes an error"], answer: 2}
+];
+
+const quizDiv = document.getElementById('quiz');
+
+quizData.forEach((item, i) => {
+    const qDiv = document.createElement('div');
+    qDiv.className = 'question';
+    qDiv.innerHTML = `<p>${i+1}. ${item.q}</p>`;
+    item.options.forEach((opt, j) => {
+        const letter = String.fromCharCode(65 + j); // A, B, C, D
+        qDiv.innerHTML += `<label><input type="radio" name="q${i}" value="${j}"> (${letter}) ${opt}</label>`;
+    });
+    quizDiv.appendChild(qDiv);
+});
+
+function submitQuiz() {
+    let score = 0;
+    let correctAnswers = 0;
+    quizData.forEach((item, i) => {
+        const selected = document.querySelector(`input[name="q${i}"]:checked`);
+        const feedbackDiv = document.createElement('div');
+        feedbackDiv.classList.add('answer-feedback');
+
+        if (selected) {
+            if (parseInt(selected.value) === item.answer) {
+                correctAnswers++;
+                feedbackDiv.innerHTML = `<span class="correct">✅ Correct! ${item.options[item.answer]}</span>`;
+                selected.parentElement.style.color = 'green';
+            } else {
+                feedbackDiv.innerHTML = `<span class="incorrect">❌ Incorrect. The correct answer is: ${item.options[item.answer]}</span>`;
+                selected.parentElement.style.color = 'red';
+            }
+        }
+        document.querySelector(`.question:nth-child(${i+1})`).appendChild(feedbackDiv);
+    });
+
+    document.getElementById('result').innerText = `You got ${correctAnswers} out of ${quizData.length} correct!`;
+    document.querySelector('.retry-btn').style.display = 'block';
+    document.querySelector('.submit-btn').style.display = 'none';
+}
+
+function retryQuiz() {
+    document.querySelectorAll('input[type="radio"]:checked').forEach(radio => radio.checked = false);
+    document.querySelectorAll('.answer-feedback').forEach(feedback => feedback.remove());
+    document.getElementById('result').innerText = '';
+    document.querySelector('.submit-btn').style.display = 'block';
+    document.querySelector('.retry-btn').style.display = 'none';
+}
+</script>
+
+</body>
+</html>
